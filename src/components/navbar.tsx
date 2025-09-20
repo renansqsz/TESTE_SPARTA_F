@@ -1,4 +1,3 @@
-// src/components/Navbar.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,12 +10,13 @@ import {
   IconButton,
   Toolbar,
   Box,
+  Divider,
 } from "@mui/material";
 
 import {
   Menu as MenuIcon,
-  Home as HomeIcon,
-  Info as InfoIcon,
+  MenuBook,
+  AutoStories,
   Mail as MailIcon,
 } from "@mui/icons-material";
 
@@ -24,7 +24,7 @@ const drawerWidthOpen = 151;
 const drawerWidthClosed = 60;
 
 const Navbar: React.FC = () => {
-  const [open, setOpen] = useState(false); // Drawer inicia fechado
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -36,12 +36,12 @@ const Navbar: React.FC = () => {
         "& .MuiDrawer-paper": {
           width: open ? drawerWidthOpen : drawerWidthClosed,
           boxSizing: "border-box",
-          backgroundColor: "#1e1e2f",
+          backgroundColor: "#3f4d67",
           color: "#fff",
           transition: "width 0.3s",
           display: "flex",
           flexDirection: "column",
-          overflowX: "hidden", // impede scroll horizontal
+          overflowX: "hidden",
         },
       }}
     >
@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
       <Box
         sx={{
           flexGrow: 1,
-          overflowY: open ? "auto" : "hidden", // scroll aparece só quando aberto
+          overflowY: open ? "auto" : "hidden",
         }}
       >
         <List
@@ -73,30 +73,57 @@ const Navbar: React.FC = () => {
         >
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/")}>
-              <ListItemIcon sx={{ color: "white", minWidth: 0, justifyContent: "center" }}>
-                <HomeIcon />
+              <ListItemIcon
+                sx={{ color: "white", minWidth: 0, justifyContent: "center" }}
+              >
+                <MenuBook />
               </ListItemIcon>
               {open && <ListItemText primary="Catálogo" sx={{ ml: 2 }} />}
             </ListItemButton>
           </ListItem>
+          <Divider
+            sx={{
+              bgcolor: "rgba(255,255,255,0.3)",
+              height: "1px",
+              alignSelf: "stretch",
+            }}
+          />
 
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/dashSindra")}>
-              <ListItemIcon sx={{ color: "white", minWidth: 0, justifyContent: "center" }}>
-                <InfoIcon />
+              <ListItemIcon
+                sx={{ color: "white", minWidth: 0, justifyContent: "center" }}
+              >
+                <AutoStories />
               </ListItemIcon>
               {open && <ListItemText primary="Sindra" sx={{ ml: 2 }} />}
             </ListItemButton>
           </ListItem>
+          <Divider
+            sx={{
+              bgcolor: "rgba(255,255,255,0.3)",
+              height: "1px",
+              alignSelf: "stretch",
+            }}
+          />
 
           <ListItem disablePadding>
             <ListItemButton onClick={() => navigate("/contato")}>
-              <ListItemIcon sx={{ color: "white", minWidth: 0, justifyContent: "center" }}>
+              <ListItemIcon
+                sx={{ color: "white", minWidth: 0, justifyContent: "center" }}
+              >
                 <MailIcon />
               </ListItemIcon>
               {open && <ListItemText primary="Contato" sx={{ ml: 2 }} />}
             </ListItemButton>
           </ListItem>
+          <Divider
+            sx={{
+              bgcolor: "rgba(255,255,255,0.3)",
+              height: "1px",
+              alignSelf: "stretch",
+            }}
+          />
         </List>
       </Box>
     </Drawer>

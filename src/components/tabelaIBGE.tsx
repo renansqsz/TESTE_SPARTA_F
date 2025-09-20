@@ -59,18 +59,15 @@ const TabelaIBGE: React.FC = () => {
     }
   }, [selectedDate]);
 
-  // Corrigido: detecta "série encerrada" em qualquer lugar do nome
   const renderStatus = (nome: string) => {
     const encerrada = /série encerrada/i.test(nome);
     return encerrada ? "Série Encerrada" : "Série Ativa";
   };
 
-  // Filtragem de dados
   const filteredData = dados
     .filter((area) => (filterId ? area.id === filterId : true))
     .filter((area) => (filterNome ? area.nome === filterNome : true));
 
-  // Listas únicas para filtros
   const allIds = Array.from(new Set(dados.map((area) => area.id)));
   const allNomes = Array.from(new Set(dados.map((area) => area.nome)));
   const allStatus = Array.from(
@@ -79,7 +76,7 @@ const TabelaIBGE: React.FC = () => {
 
   return (
     <Box>
-      {/* Filtro de Data */}
+      {/* Seleção de Data */}
       <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 2 }}>
         <CalendarTodayIcon />
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
@@ -93,11 +90,29 @@ const TabelaIBGE: React.FC = () => {
         </LocalizationProvider>
       </Box>
 
+      {/* Tabela */}
       <TableContainer component={Paper}>
         <Table>
+          {/* Cabeçalho */}
           <TableHead>
             <TableRow>
-              {}
+              <TableCell>
+                <Typography fontWeight="bold">ID</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography fontWeight="bold">Nome</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography fontWeight="bold">Agregado</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography fontWeight="bold">Status</Typography>
+              </TableCell>
+            </TableRow>
+
+            {/* Linha de filtros - agora abaixo dos títulos */}
+            <TableRow>
+              {/* Filtro ID */}
               <TableCell>
                 <FormControl fullWidth size="small">
                   <Select
@@ -113,12 +128,9 @@ const TabelaIBGE: React.FC = () => {
                     ))}
                   </Select>
                 </FormControl>
-                <Typography fontWeight="bold" mt={1}>
-                  ID
-                </Typography>
               </TableCell>
 
-              {}
+              {/* Filtro Nome */}
               <TableCell>
                 <FormControl fullWidth size="small">
                   <Select
@@ -134,16 +146,14 @@ const TabelaIBGE: React.FC = () => {
                     ))}
                   </Select>
                 </FormControl>
-                <Typography fontWeight="bold" mt={1}>
-                  Nome
-                </Typography>
               </TableCell>
 
+              {/* Espaço Agregado */}
               <TableCell>
-                <Typography fontWeight="bold">Agregado</Typography>
+                <Box sx={{ height: 40 }} />
               </TableCell>
 
-              {}
+              {/* Filtro Status */}
               <TableCell>
                 <FormControl fullWidth size="small">
                   <Select
@@ -159,13 +169,11 @@ const TabelaIBGE: React.FC = () => {
                     ))}
                   </Select>
                 </FormControl>
-                <Typography fontWeight="bold" mt={1}>
-                  Status
-                </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
 
+          {/* Corpo da Tabela */}
           <TableBody>
             {filteredData.map((area) =>
               area.agregados
@@ -192,6 +200,8 @@ const TabelaIBGE: React.FC = () => {
                           p: "4px 8px",
                           borderRadius: 1,
                           display: "inline-block",
+                          minWidth: "80px",
+                          textAlign: "center",
                         }}
                       >
                         {renderStatus(agregado.nome)}
