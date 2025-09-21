@@ -31,6 +31,16 @@ const CORES_VALOR = {
   negativo: { background: "#ffebee", color: "#b71c1c" },
 };
 
+// Função para remover linhas fantasma
+const removeLinhasIndisponiveis = (dados: Valor[]) =>
+  dados.filter(
+    (item) =>
+      !(
+        (!item.D4N || item.D4N.trim() === "") &&
+        (item.V === "Valor Indisponível" || item.V === "...")
+      )
+  );
+
 const TabelaSindra: React.FC = () => {
   const [dados, setDados] = useState<Valor[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date(2020, 0));
@@ -55,7 +65,8 @@ const TabelaSindra: React.FC = () => {
           V: item.V === "..." ? "Valor Indisponível" : parseFloat(item.V),
         }));
 
-      setDados(parsed);
+      const dadosLimpos = removeLinhasIndisponiveis(parsed);
+      setDados(dadosLimpos);
     } catch (err) {
       console.error(err);
     }
