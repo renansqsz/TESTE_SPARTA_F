@@ -13,7 +13,6 @@ import {
   Select,
   FormControl,
 } from "@mui/material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -33,7 +32,6 @@ interface AreaUrbanizada {
 const TabelaIBGE: React.FC = () => {
   const [dados, setDados] = useState<AreaUrbanizada[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date(2020, 0));
-
   const [filterId, setFilterId] = useState("");
   const [filterNome, setFilterNome] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -51,18 +49,13 @@ const TabelaIBGE: React.FC = () => {
   };
 
   useEffect(() => {
-    if (selectedDate) {
-      const ano = selectedDate.getFullYear();
-      const mes = String(selectedDate.getMonth() + 1).padStart(2, "0");
-      const periodo = `${ano}${mes}`;
-      fetchData(periodo);
-    }
+    if (!selectedDate) return;
+    const ano = selectedDate.getFullYear();
+    const mes = String(selectedDate.getMonth() + 1).padStart(2, "0");
+    fetchData(`${ano}${mes}`);
   }, [selectedDate]);
 
-  const renderStatus = (nome: string) => {
-    const encerrada = /série encerrada/i.test(nome);
-    return encerrada ? "Série Encerrada" : "Série Ativa";
-  };
+  const renderStatus = (nome: string) =>/série encerrada/i.test(nome) ? "Série Encerrada" : "Série Ativa";
 
   const filteredData = dados
     .filter((area) => (filterId ? area.id === filterId : true))
@@ -76,49 +69,31 @@ const TabelaIBGE: React.FC = () => {
 
   return (
     <Box>
-      {/* Seleção de Data */}
       <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 2 }}>
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
           <DatePicker
             views={["year", "month"]}
             label="Selecionar Ano e Mês"
             value={selectedDate}
-            onChange={(newValue) => setSelectedDate(newValue)}
+            onChange={setSelectedDate}
             slotProps={{ textField: { size: "small" } }}
           />
         </LocalizationProvider>
       </Box>
-
-      {/* Tabela */}
       <TableContainer component={Paper}>
         <Table>
-          {/* Cabeçalho */}
           <TableHead>
             <TableRow>
-              <TableCell>
-                <Typography fontWeight="bold">ID</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography fontWeight="bold">Nome</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography fontWeight="bold">Agregado</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography fontWeight="bold">Status</Typography>
-              </TableCell>
+              {["ID", "Nome", "Agregado", "Status"].map((title) => (
+                <TableCell key={title}>
+                  <Typography fontWeight="bold">{title}</Typography>
+                </TableCell>
+              ))}
             </TableRow>
-
-            {/* Linha de filtros - agora abaixo dos títulos */}
             <TableRow>
-              {/* Filtro ID */}
               <TableCell>
                 <FormControl fullWidth size="small">
-                  <Select
-                    displayEmpty
-                    value={filterId}
-                    onChange={(e) => setFilterId(e.target.value)}
-                  >
+                  <Select value={filterId} displayEmpty onChange={(e) => setFilterId(e.target.value)}>
                     <MenuItem value="">Todos</MenuItem>
                     {allIds.map((id) => (
                       <MenuItem key={id} value={id}>
@@ -129,14 +104,9 @@ const TabelaIBGE: React.FC = () => {
                 </FormControl>
               </TableCell>
 
-              {/* Filtro Nome */}
               <TableCell>
                 <FormControl fullWidth size="small">
-                  <Select
-                    displayEmpty
-                    value={filterNome}
-                    onChange={(e) => setFilterNome(e.target.value)}
-                  >
+                  <Select value={filterNome} displayEmpty onChange={(e) => setFilterNome(e.target.value)}>
                     <MenuItem value="">Todos</MenuItem>
                     {allNomes.map((nome) => (
                       <MenuItem key={nome} value={nome}>
@@ -147,17 +117,15 @@ const TabelaIBGE: React.FC = () => {
                 </FormControl>
               </TableCell>
 
-              {/* Espaço Agregado */}
               <TableCell>
                 <Box sx={{ height: 40 }} />
               </TableCell>
 
-              {/* Filtro Status */}
               <TableCell>
                 <FormControl fullWidth size="small">
                   <Select
-                    displayEmpty
                     value={filterStatus}
+                    displayEmpty
                     onChange={(e) => setFilterStatus(e.target.value)}
                   >
                     <MenuItem value="">Todos</MenuItem>
@@ -172,42 +140,36 @@ const TabelaIBGE: React.FC = () => {
             </TableRow>
           </TableHead>
 
-          {/* Corpo da Tabela */}
           <TableBody>
             {filteredData.map((area) =>
               area.agregados
-                .filter((agregado) =>
-                  filterStatus ? renderStatus(agregado.nome) === filterStatus : true
-                )
-                .map((agregado) => (
-                  <TableRow key={`${area.id}-${agregado.id}`}>
-                    <TableCell>{area.id}</TableCell>
-                    <TableCell>{area.nome}</TableCell>
-                    <TableCell>{agregado.nome}</TableCell>
-                    <TableCell>
-                      <Box
-                        sx={{
-                          backgroundColor:
-                            renderStatus(agregado.nome) === "Série Encerrada"
-                              ? "#ffebee"
-                              : "#e8f5e9",
-                          color:
-                            renderStatus(agregado.nome) === "Série Encerrada"
-                              ? "#b71c1c"
-                              : "#1b5e20",
-                          fontWeight: "bold",
-                          p: "4px 8px",
-                          borderRadius: 1,
-                          display: "inline-block",
-                          minWidth: "80px",
-                          textAlign: "center",
-                        }}
-                      >
-                        {renderStatus(agregado.nome)}
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))
+                .filter((agregado) => (filterStatus ? renderStatus(agregado.nome) === filterStatus : true))
+                .map((agregado) => {
+                  const status = renderStatus(agregado.nome);
+                  return (
+                    <TableRow key={`${area.id}-${agregado.id}`}>
+                      <TableCell>{area.id}</TableCell>
+                      <TableCell>{area.nome}</TableCell>
+                      <TableCell>{agregado.nome}</TableCell>
+                      <TableCell>
+                        <Box
+                          sx={{
+                            backgroundColor: status === "Série Encerrada" ? "#ffebee" : "#e8f5e9",
+                            color: status === "Série Encerrada" ? "#b71c1c" : "#1b5e20",
+                            fontWeight: "bold",
+                            p: "4px 8px",
+                            borderRadius: 1,
+                            display: "inline-block",
+                            minWidth: "80px",
+                            textAlign: "center",
+                          }}
+                        >
+                          {status}
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
             )}
           </TableBody>
         </Table>

@@ -13,7 +13,6 @@ import {
   Select,
   FormControl,
 } from "@mui/material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -29,9 +28,9 @@ interface Valor {
 const CORES_VALOR = {
   positivo: { background: "#e8f5e9", color: "#1b5e20" },
   negativo: { background: "#ffebee", color: "#b71c1c" },
+  indisponivel: { background: "#eeeeee", color: "#757575" },
 };
 
-// Função para remover linhas fantasma
 const removeLinhasIndisponiveis = (dados: Valor[]) =>
   dados.filter(
     (item) =>
@@ -65,8 +64,7 @@ const TabelaSindra: React.FC = () => {
           V: item.V === "..." ? "Valor Indisponível" : parseFloat(item.V),
         }));
 
-      const dadosLimpos = removeLinhasIndisponiveis(parsed);
-      setDados(dadosLimpos);
+      setDados(removeLinhasIndisponiveis(parsed));
     } catch (err) {
       console.error(err);
     }
@@ -81,11 +79,9 @@ const TabelaSindra: React.FC = () => {
     .filter((item) => (filterPeriodo ? item.D3N === filterPeriodo : true))
     .filter((item) => (filterSubcategoria ? item.D4N === filterSubcategoria : true));
 
-  const allVariaveis = Array.from(new Set(dados.map((d) => d.D2N).filter((v) => v && v.trim() !== "")));
-  const allPeriodos = Array.from(new Set(dados.map((d) => d.D3N).filter((p) => p && p.trim() !== "")));
-  const allSubcategorias = Array.from(
-    new Set(dados.map((d) => d.D4N).filter((s) => s && s.trim() !== ""))
-  );
+  const allVariaveis = Array.from(new Set(dados.map((d) => d.D2N).filter(Boolean)));
+  const allPeriodos = Array.from(new Set(dados.map((d) => d.D3N).filter(Boolean)));
+  const allSubcategorias = Array.from(new Set(dados.map((d) => d.D4N).filter(Boolean)));
 
   return (
     <Box>
@@ -95,36 +91,27 @@ const TabelaSindra: React.FC = () => {
             views={["year", "month"]}
             label="Selecionar Ano e Mês"
             value={selectedDate}
-            onChange={(newValue) => setSelectedDate(newValue)}
+            onChange={setSelectedDate}
             slotProps={{ textField: { size: "small" } }}
           />
         </LocalizationProvider>
       </Box>
-
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>
-                <Typography fontWeight="bold">Variável</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography fontWeight="bold">Período</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography fontWeight="bold">Subcategoria</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography fontWeight="bold">Valor</Typography>
-              </TableCell>
+              {["Variável", "Período", "Subcategoria", "Valor"].map((title) => (
+                <TableCell key={title}>
+                  <Typography fontWeight="bold">{title}</Typography>
+                </TableCell>
+              ))}
             </TableRow>
-
             <TableRow>
               <TableCell>
                 <FormControl fullWidth size="small">
                   <Select
-                    displayEmpty
                     value={filterVariavel}
+                    displayEmpty
                     onChange={(e) => setFilterVariavel(e.target.value)}
                   >
                     <MenuItem value="">Todas as Variáveis</MenuItem>
@@ -140,8 +127,8 @@ const TabelaSindra: React.FC = () => {
               <TableCell>
                 <FormControl fullWidth size="small">
                   <Select
-                    displayEmpty
                     value={filterPeriodo}
+                    displayEmpty
                     onChange={(e) => setFilterPeriodo(e.target.value)}
                   >
                     <MenuItem value="">Todos os Períodos</MenuItem>
@@ -157,8 +144,8 @@ const TabelaSindra: React.FC = () => {
               <TableCell>
                 <FormControl fullWidth size="small">
                   <Select
-                    displayEmpty
                     value={filterSubcategoria}
+                    displayEmpty
                     onChange={(e) => setFilterSubcategoria(e.target.value)}
                   >
                     <MenuItem value="">Todas as Subcategorias</MenuItem>
@@ -180,9 +167,9 @@ const TabelaSindra: React.FC = () => {
               const cores =
                 typeof item.V === "number"
                   ? item.V < 0
-                    ? { background: "#ffebee", color: "#b71c1c" }
-                    : { background: "#e8f5e9", color: "#1b5e20" }
-                  : { background: "#eeeeee", color: "#757575" };
+                    ? CORES_VALOR.negativo
+                    : CORES_VALOR.positivo
+                  : CORES_VALOR.indisponivel;
 
               return (
                 <TableRow key={idx} hover>
