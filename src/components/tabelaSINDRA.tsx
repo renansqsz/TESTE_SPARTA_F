@@ -90,7 +90,6 @@ const TabelaSindra: React.FC = () => {
   return (
     <Box>
       <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 2 }}>
-        <CalendarTodayIcon />
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
           <DatePicker
             views={["year", "month"]}

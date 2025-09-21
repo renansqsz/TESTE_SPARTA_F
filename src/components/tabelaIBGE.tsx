@@ -78,7 +78,6 @@ const TabelaIBGE: React.FC = () => {
     <Box>
       {/* Seleção de Data */}
       <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 2 }}>
-        <CalendarTodayIcon />
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
           <DatePicker
             views={["year", "month"]}
