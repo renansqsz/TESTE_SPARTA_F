@@ -17,7 +17,6 @@ import {
   Menu as MenuIcon,
   MenuBook,
   AutoStories,
-  Mail as MailIcon,
 } from "@mui/icons-material";
 
 const drawerWidthOpen = 151;
@@ -106,17 +105,6 @@ const Navbar: React.FC = () => {
               alignSelf: "stretch",
             }}
           />
-
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => navigate("/contato")}>
-              <ListItemIcon
-                sx={{ color: "white", minWidth: 0, justifyContent: "center" }}
-              >
-                <MailIcon />
-              </ListItemIcon>
-              {open && <ListItemText primary="Contato" sx={{ ml: 2 }} />}
-            </ListItemButton>
-          </ListItem>
           <Divider
             sx={{
               bgcolor: "rgba(255,255,255,0.3)",

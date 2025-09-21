@@ -27,6 +27,16 @@ interface Valor {
   V: number | string;
 }
 
+// Função para remover linhas fantasma
+const removeLinhasIndisponiveis = (dados: Valor[]) =>
+  dados.filter(
+    (item) =>
+      !(
+        (!item.D4N || item.D4N.trim() === "") &&
+        (item.V === "Valor Indisponível" || item.V === "...")
+      )
+  );
+
 const dashSindra: React.FC = () => {
   const [dados, setDados] = useState<Valor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +60,9 @@ const dashSindra: React.FC = () => {
           D4N: item.D4N,
           V: item.V === "..." ? "Valor Indisponível" : parseFloat(item.V),
         }));
-      setDados(parsed);
+
+      const dadosLimpos = removeLinhasIndisponiveis(parsed);
+      setDados(dadosLimpos);
     } catch (err) {
       console.error(err);
     } finally {
