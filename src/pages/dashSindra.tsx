@@ -14,7 +14,6 @@ import {
   FormControl,
   CircularProgress,
 } from "@mui/material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -26,8 +25,6 @@ interface Valor {
   D4N: string;
   V: number | string;
 }
-
-// Função para remover linhas fantasma
 const removeLinhasIndisponiveis = (dados: Valor[]) =>
   dados.filter(
     (item) =>
